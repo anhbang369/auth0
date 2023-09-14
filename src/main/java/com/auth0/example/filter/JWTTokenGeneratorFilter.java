@@ -9,6 +9,7 @@ import io.jsonwebtoken.security.Keys;
 import lombok.var;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.core.oidc.user.OidcUser;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
@@ -26,6 +27,7 @@ import java.nio.charset.StandardCharsets;
 public class JWTTokenGeneratorFilter extends OncePerRequestFilter {
     private final JwtService jwtService;
     private final UserRepository repository;
+    private PasswordEncoder passwordEncoder;
 
     public JWTTokenGeneratorFilter(JwtService jwtService, UserRepository repository) {
         this.jwtService = jwtService;
@@ -56,6 +58,7 @@ public class JWTTokenGeneratorFilter extends OncePerRequestFilter {
         if (existingUser == null) {
             Users users = Users.builder()
                     .email(email)
+                    .password(passwordEncoder.encode(" "))
                     .role(Role.builder().name("USER").build())
                     .build();
 
